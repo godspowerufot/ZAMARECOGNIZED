@@ -1,0 +1,136 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Updated color tokens for gaming theme with black, yellow, white palette */
+  --background: oklch(0 0 0); /* Black background */
+  --foreground: oklch(1 0 0); /* White text */
+  --card: oklch(0.12 0 0); /* Dark gray cards */
+  --card-foreground: oklch(1 0 0); /* White text on cards */
+  --popover: oklch(0.85 0.15 85); /* Yellow popover */
+  --popover-foreground: oklch(0 0 0); /* Black text on popover */
+  --primary: oklch(0.85 0.15 85); /* Yellow primary */
+  --primary-foreground: oklch(0 0 0); /* Black text on primary */
+  --secondary: oklch(0.75 0.12 65); /* Orange secondary */
+  --secondary-foreground: oklch(1 0 0); /* White text on secondary */
+  --muted: oklch(0.12 0 0); /* Dark gray muted */
+  --muted-foreground: oklch(1 0 0); /* White muted text */
+  --accent: oklch(0.75 0.12 65); /* Orange accent */
+  --accent-foreground: oklch(0 0 0); /* Black text on accent */
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.3 0 0); /* Gray border */
+  --input: oklch(0.12 0 0); /* Dark input background */
+  --ring: oklch(0.85 0.15 85); /* Yellow focus ring */
+  --chart-1: oklch(0.85 0.15 85);
+  --chart-2: oklch(0.75 0.12 65);
+  --chart-3: oklch(0 0 0);
+  --chart-4: oklch(1 0 0);
+  --chart-5: oklch(0.3 0 0);
+  --radius: 0rem; /* Set to 0 for flat design - no rounded corners */
+  --sidebar: oklch(0.12 0 0);
+  --sidebar-foreground: oklch(1 0 0);
+  --sidebar-primary: oklch(0.85 0.15 85);
+  --sidebar-primary-foreground: oklch(0 0 0);
+  --sidebar-accent: oklch(0.75 0.12 65);
+  --sidebar-accent-foreground: oklch(0 0 0);
+  --sidebar-border: oklch(0.3 0 0);
+  --sidebar-ring: oklch(0.85 0.15 85);
+}
+
+.dark {
+  /* Dark mode uses same colors since we're already using dark theme */
+  --background: oklch(0 0 0);
+  --foreground: oklch(1 0 0);
+  --card: oklch(0.12 0 0);
+  --card-foreground: oklch(1 0 0);
+  --popover: oklch(0.85 0.15 85);
+  --popover-foreground: oklch(0 0 0);
+  --primary: oklch(0.85 0.15 85);
+  --primary-foreground: oklch(0 0 0);
+  --secondary: oklch(0.75 0.12 65);
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(0.12 0 0);
+  --muted-foreground: oklch(1 0 0);
+  --accent: oklch(0.75 0.12 65);
+  --accent-foreground: oklch(0 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.3 0 0);
+  --input: oklch(0.12 0 0);
+  --ring: oklch(0.85 0.15 85);
+  --chart-1: oklch(0.85 0.15 85);
+  --chart-2: oklch(0.75 0.12 65);
+  --chart-3: oklch(0 0 0);
+  --chart-4: oklch(1 0 0);
+  --chart-5: oklch(0.3 0 0);
+  --sidebar: oklch(0.12 0 0);
+  --sidebar-foreground: oklch(1 0 0);
+  --sidebar-primary: oklch(0.85 0.15 85);
+  --sidebar-primary-foreground: oklch(0 0 0);
+  --sidebar-accent: oklch(0.75 0.12 65);
+  --sidebar-accent-foreground: oklch(0 0 0);
+  --sidebar-border: oklch(0.3 0 0);
+  --sidebar-ring: oklch(0.85 0.15 85);
+}
+
+@theme inline {
+  /* Added gaming fonts - Press Start 2P for headers, Geist for body */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-gaming: "Press Start 2P", monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: 0px; /* All radius values set to 0 for flat design */
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  /* Added gaming font utility classes */
+  .font-gaming {
+    font-family: "Press Start 2P", monospace;
+  }
+}
+
+/* Added Google Fonts import for Press Start 2P gaming font */
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");

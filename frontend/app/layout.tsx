@@ -1,0 +1,67 @@
+"use client";
+import type React from "react";
+import type { Metadata } from "next";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import { Analytics } from "@vercel/analytics/next";
+import { Suspense } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { WagmiProvider } from "wagmi";
+import { config } from "@/config/config";
+import "./globals.css";
+import "@rainbow-me/rainbowkit/styles.css";
+import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { FheProvider } from "@/config/FheRelayey";
+import Script from "next/script";
+
+import type { Chain, Client, Transport, Account } from "viem";
+
+const metadata: Metadata = {
+  title: "Zama Recognition System",
+  description: "Gaming-themed Web3 Creator Recognition Platform",
+  generator: "v0.app",
+};
+
+export function clientToProvider(client: Client<Transport, Chain>) {}
+
+/** Action to convert a viem Client to an ethers.js Provider. */
+export function useEthersProvider({ chainId }: { chainId?: number } = {}) {}
+
+export function clientToSigner(client: Client<Transport, Chain, Account>) {}
+
+/** Hook to convert a viem Wallet Client to an ethers.js Signer. */
+export function useEthersSigner({ chainId }: { chainId?: number } = {}) {}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const queryClient = new QueryClient();
+
+  return (
+    <html lang="en">
+      <head>
+        <Script
+          src="https://cdn.zama.ai/relayer-sdk-js/0.1.0-9/relayer-sdk-js.umd.cjs"
+          type="text/javascript"
+          strategy="beforeInteractive"
+        />
+      </head>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider>
+            <FheProvider>
+              <body
+                className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}
+              >
+                <Suspense fallback={null}>{children}</Suspense>
+                <Analytics />
+              </body>
+            </FheProvider>
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </html>
+  );
+}
