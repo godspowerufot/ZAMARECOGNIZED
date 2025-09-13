@@ -19,17 +19,13 @@ export function useRegisterVIP() {
     hash,
   });
 
-  async function registerVIP(
-    vip: Address,
-    inputEuint32: any,
-    inputProof: `0x${string}`
-  ) {
+  async function registerVIP(inputEuint32: any, inputProof: `0x${string}`) {
     try {
       await writeContract({
         abi: FHEZamaVipABI.abi,
         address: CONTRACT_ADDRESS,
         functionName: "registerVIP",
-        args: [vip, inputEuint32, inputProof],
+        args: [inputEuint32, inputProof],
       });
     } catch (err) {
       console.error("❌ registerVIP error:", err);

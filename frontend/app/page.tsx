@@ -41,7 +41,7 @@ import { Creator, Recognition, VIP } from "@/lib/type";
 import CreatorsDirectory from "@/components/layout/creator/creatorCard";
 import VIPStatusCard from "@/components/layout/Vip/becomeVip";
 import RecognitionCard from "@/components/layout/recognize/recognize";
-import { useFhe } from "@/config/FheRelayey";
+// import { useFhe } from "@/config/FheRelayey";
 import { useRecognizeCreator } from "@/hooks/use-recognize";
 import { useAccount } from "wagmi";
 import { ethers } from "ethers";
@@ -62,7 +62,7 @@ export default function ZamaRecognitionSystem() {
   const [walletAddress, setWalletAddress] = useState<string>("");
   const { address, isConnected } = useAccount();
 
-  const fhe = useFhe();
+  // const fhe = useFhe();
   const signer = useEthersSigner();
   const [creatorForm, setCreatorForm] = useState({
     name: "",
@@ -199,35 +199,14 @@ export default function ZamaRecognitionSystem() {
     const reasonText = recognitionReason.trim() || "Great work this week!";
 
     try {
-      if (!fhe) {
-        console.log("Still loading FHE...");
-        return;
-      }
+      // if (!fhe) {
+      //   console.log("Still loading FHE...");
+      //   return;
+      // }
 
       const contractAddress = "0x4101e9c61F5CEC606A9A9b884469fD15dB270722";
 
       // Create encrypted input (string instead of int)
-      const encryptedInput = fhe.createEncryptedInput(
-        contractAddress,
-        creator.creatorAddress
-      );
-      console.log(Object.keys(encryptedInput));
-
-      // Encrypt the raw string bytes
-      // Encrypt the raw string bytes
-      const encoder = new TextEncoder();
-      const reasonBytes = encoder.encode(reasonText);
-
-      const encryptedValue = await encryptedInput.encrypt(reasonBytes);
-      const encryptedReason = encryptedValue.handles[0]; // ciphertext
-
-      // Call contract
-      await recognizeCreator(
-        creator.name,
-        creator.creatorAddress as Address,
-        encryptedReason, // now raw string encrypted
-        currentWeek
-      );
 
       setRecognitionReason("");
       setSelectedCreator(null);

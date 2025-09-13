@@ -1,7 +1,8 @@
+// Updated VIP Status Card Component
 "use client";
 
 import { useEffect, useState } from "react";
-import { Shield, Calendar, Star } from "lucide-react";
+import { Shield, Calendar, Star, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAccount } from "wagmi";
@@ -11,7 +12,9 @@ import {
   useHasVIPNominatedThisWeek,
   useGetEncryptedVIPId,
 } from "@/hooks/use-Vip";
-import { useFhe } from "@/config/FheRelayey"; // Your updated context
+import { useFhe } from "@/config/FheRelayey";
+import { getFheInstance, initializeFheInstance } from "@/utils/fheinstance";
+import { toHex } from "viem";
 
 const CONTRACT_ADDRESS = "0x96A1B93F3BB71Ee4779a28c85BDC8BB756F2c1f9";
 
@@ -24,9 +27,6 @@ export default function VIPStatusCard({ isVIP, setIsVIP }: VIPStatusCardProps) {
   const { address, isConnected } = useAccount();
   const [isEncrypting, setIsEncrypting] = useState(false);
 
-  // Use the updated FHE context
-  const fhe = useFhe();
-
   const { registerVIP, isPending, isConfirming, isSuccess, error } =
     useRegisterVIP();
   const { data: vipStatus } = useCheckVIPStatus(address as `0x${string}`);
@@ -36,96 +36,122 @@ export default function VIPStatusCard({ isVIP, setIsVIP }: VIPStatusCardProps) {
     1
   );
 
-  async function handleBecomeVIP() {
-    console.log("Starting VIP registration process...");
-
-    if (!isConnected || !address) {
-      console.warn("Wallet not connected or no address");
-      return;
-    }
-
-    if (!fhe || !fhe.isReady) {
-      console.warn("FHE not ready yet");
-      return;
-    }
-
-    setIsEncrypting(true);
-
-    try {
-      console.log("Creating encrypted input...");
-
-      // Use the context's encryptNumber function
-      const vipId = 123;
-      const encryptionResult = await fhe.encryptNumber(
-        vipId,
-        CONTRACT_ADDRESS,
-        address
-      );
-
-      console.log("Encryption successful:", encryptionResult);
-
-      // Call registerVIP with the encrypted data
-      await registerVIP(
-        address as `0x${string}`,
-        encryptionResult.encryptedData, // Already a hex string
-        encryptionResult.inputProof as `0x${string}` // Already a hex string
-      );
-
-      console.log("VIP registration transaction submitted");
-    } catch (err) {
-      console.error("❌ handleBecomeVIP error:", err);
-    } finally {
-      setIsEncrypting(false);
-    }
-  }
-
-  // Alternative: Use createEncryptedInput for multiple values
-  async function handleBecomeVIPAlternative() {
-    if (!fhe || !fhe.isReady || !address) return;
-
-    setIsEncrypting(true);
-    try {
-      // For multiple values or more control
-      const result = await fhe.createEncryptedInput(
-        CONTRACT_ADDRESS,
-        address,
-        [123] // Array of values to encrypt
-      );
-
-      await registerVIP(
-        address as `0x${string}`,
-        result.handles[0], // First encrypted handle
-        result.inputProof as `0x${string}`
-      );
-    } catch (err) {
-      console.error("❌ Alternative handleBecomeVIP error:", err);
-    } finally {
-      setIsEncrypting(false);
-    }
-  }
-
-  // Sync hook result with local state
+  // Sync VIP status with local state
   useEffect(() => {
     if (vipStatus !== undefined) {
+      console.log(
+        `🔄 VIP status updated for ${address}: ${Boolean(vipStatus)}`
+      );
       setIsVIP(Boolean(vipStatus));
     }
-  }, [vipStatus, setIsVIP]);
+  }, [vipStatus, setIsVIP, address]);
 
-  // Handle successful registration
+  // Handle registration success
   useEffect(() => {
     if (isSuccess) {
-      console.log("✅ VIP registration successful!");
+      console.log(`✅ VIP registration successful for address: ${address}`);
     }
-  }, [isSuccess]);
+  }, [isSuccess, address]);
 
   // Handle registration errors
   useEffect(() => {
     if (error) {
-      console.error("❌ VIP registration error:", error);
+      console.error(`❌ VIP registration error for ${address}:`, {
+        message: error.message,
+        cause: error.cause,
+        stack: error.stack,
+      });
     }
-  }, [error]);
+  }, [error, address]);
+
+  const handleBecomeVIP = async () => {
+    if (!isConnected || !address) {
+      console.warn(
+        "⚠️ [BECOME VIP] Wallet not connected or no address available"
+      );
+      return;
+    }
+
+    console.log(
+      `🚀 [BECOME VIP] Starting VIP registration for address: ${address}`
+    );
+    setIsEncrypting(true);
+
+    try {
+      console.log("🔐 [BECOME VIP] Initializing FHE instance...");
+
+      let fhe = getFheInstance();
+      if (!fhe) {
+        console.log(
+          "📦 [BECOME VIP] No FHE instance found, creating new one..."
+        );
+        fhe = await initializeFheInstance();
+      }
+
+      if (!fhe) {
+        throw new Error("Failed to initialize FHE instance");
+      }
+
+      console.log("✅ [BECOME VIP] FHE instance ready");
+
+      // Generate random VIP ID
+      const randomVipId = BigInt(Math.floor(Math.random() * 10));
+      console.log(`🎲 [BECOME VIP] Generated random VIP ID: ${randomVipId}`);
+
+      // Encrypt input
+      console.log("🔏 [BECOME VIP] Creating encrypted input...");
+      const ciphertext = await fhe.createEncryptedInput(
+        CONTRACT_ADDRESS,
+        address
+      );
+
+      console.log("➕ [BECOME VIP] Adding random VIP ID to ciphertext...");
+      ciphertext.add32(BigInt(randomVipId));
+
+      console.log("🔑 [BECOME VIP] Encrypting ciphertext...");
+      const { handles, inputProof } = await ciphertext.encrypt();
+
+      console.log("📤 [BECOME VIP] Encrypted data prepared", {
+        handles,
+        inputProof: inputProof ? "available" : "missing",
+      });
+
+      // Call registerVIP
+      console.log(
+        "📨 [BECOME VIP] Sending encrypted registration to contract..."
+      );
+      // Convert to proper hex
+      const handleHex = toHex(handles[0]); // should become 0x...
+      const proofHex = toHex(inputProof); // should become 0x...
+
+      await registerVIP(handleHex, proofHex);
+      console.log(
+        "🎉 [BECOME VIP] VIP registration transaction sent successfully"
+      );
+    } catch (err) {
+      console.error("❌ [BECOME VIP] VIP registration failed", {
+        error: err,
+        address,
+        timestamp: new Date().toISOString(),
+      });
+    } finally {
+      console.log("🏁 [BECOME VIP] VIP registration process completed");
+      setIsEncrypting(false);
+    }
+  };
 
   const isProcessing = isPending || isConfirming || isEncrypting;
+
+  // Log current component state for debugging
+  console.log("🔍 VIPStatusCard state:", {
+    address,
+    isConnected,
+    isVIP,
+    vipStatus,
+    isProcessing,
+    encryptedId: encryptedId ? `${String(encryptedId).slice(0, 12)}...` : null,
+    nominatedThisWeek,
+  });
 
   return (
     <>
@@ -154,20 +180,25 @@ export default function VIPStatusCard({ isVIP, setIsVIP }: VIPStatusCardProps) {
 
           <Button
             onClick={handleBecomeVIP}
-            disabled={!isConnected || isProcessing || !fhe?.isReady}
-            className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-gaming"
+            disabled={!isConnected || isProcessing}
+            className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-gaming w-full"
           >
-            {!isConnected
-              ? "CONNECT WALLET FIRST"
-              : !fhe?.isReady
-              ? "LOADING FHE..."
-              : isEncrypting
-              ? "ENCRYPTING..."
-              : isPending
-              ? "SUBMITTING..."
-              : isConfirming
-              ? "CONFIRMING..."
-              : "BECOME VIP"}
+            {!isConnected ? (
+              "CONNECT WALLET FIRST"
+            ) : isProcessing ? (
+              <div className="flex items-center space-x-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>
+                  {isEncrypting
+                    ? "ENCRYPTING..."
+                    : isPending
+                    ? "CONFIRMING..."
+                    : "PROCESSING..."}
+                </span>
+              </div>
+            ) : (
+              "BECOME VIP"
+            )}
           </Button>
         </div>
       ) : (

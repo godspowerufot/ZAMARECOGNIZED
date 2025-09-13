@@ -41,24 +41,15 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <head>
-        <Script
-          src="https://cdn.zama.ai/relayer-sdk-js/0.1.0-9/relayer-sdk-js.umd.cjs"
-          type="text/javascript"
-          strategy="beforeInteractive"
-        />
-      </head>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
           <RainbowKitProvider>
-            <FheProvider>
-              <body
-                className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}
-              >
-                <Suspense fallback={null}>{children}</Suspense>
-                <Analytics />
-              </body>
-            </FheProvider>
+            <body
+              className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}
+            >
+              <Suspense fallback={null}>{children}</Suspense>
+              <Analytics />
+            </body>
           </RainbowKitProvider>
         </QueryClientProvider>
       </WagmiProvider>
