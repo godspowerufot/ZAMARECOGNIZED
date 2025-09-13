@@ -11,6 +11,7 @@ import {
   useCheckVIPStatus,
   useHasVIPNominatedThisWeek,
   useGetEncryptedVIPId,
+  useBecomeVIPForTesting,
 } from "@/hooks/use-Vip";
 import { useFhe } from "@/config/FheRelayey";
 import { getFheInstance, initializeFheInstance } from "@/utils/fheinstance";
@@ -29,6 +30,13 @@ export default function VIPStatusCard({ isVIP, setIsVIP }: VIPStatusCardProps) {
 
   const { registerVIP, isPending, isConfirming, isSuccess, error } =
     useRegisterVIP();
+  const {
+    becomeVIPForTesting,
+    isPending: isTestPending,
+    isConfirming: isTestConfirming,
+    isSuccess: isTestSuccess,
+    error: testError,
+  } = useBecomeVIPForTesting();
   const { data: vipStatus } = useCheckVIPStatus(address as `0x${string}`);
   const { data: encryptedId } = useGetEncryptedVIPId(address as `0x${string}`);
   const { data: nominatedThisWeek } = useHasVIPNominatedThisWeek(
@@ -95,7 +103,7 @@ export default function VIPStatusCard({ isVIP, setIsVIP }: VIPStatusCardProps) {
       console.log("✅ [BECOME VIP] FHE instance ready");
 
       // Generate random VIP ID
-      const randomVipId = BigInt(Math.floor(Math.random() * 10));
+      const randomVipId = Math.floor(Math.random() * 1000000);
       console.log(`🎲 [BECOME VIP] Generated random VIP ID: ${randomVipId}`);
 
       // Encrypt input
@@ -106,8 +114,7 @@ export default function VIPStatusCard({ isVIP, setIsVIP }: VIPStatusCardProps) {
       );
 
       console.log("➕ [BECOME VIP] Adding random VIP ID to ciphertext...");
-      ciphertext.add32(BigInt(randomVipId));
-
+      ciphertext.add32(Number(randomVipId)); // ✅ Use 32-bit to match euint32
       console.log("🔑 [BECOME VIP] Encrypting ciphertext...");
       const { handles, inputProof } = await ciphertext.encrypt();
 
@@ -124,7 +131,11 @@ export default function VIPStatusCard({ isVIP, setIsVIP }: VIPStatusCardProps) {
       const handleHex = toHex(handles[0]); // should become 0x...
       const proofHex = toHex(inputProof); // should become 0x...
 
+      console.log(handleHex);
+      console.log("---------");
+      console.log(proofHex);
       await registerVIP(handleHex, proofHex);
+
       console.log(
         "🎉 [BECOME VIP] VIP registration transaction sent successfully"
       );
