@@ -8,7 +8,7 @@ import { FHEZamaVipABI } from "@/abi/Vip";
 import { Address } from "viem";
 
 // Contract address
-const CONTRACT_ADDRESS = "0xc2C7BD895c61173Bb8D4119a8b907622b1aeb5E4"; // replace with deployed VIPRegistry address
+const CONTRACT_ADDRESS = "0x43c1B729048Fb8817F46d5908B015076306ED0df"; // replace with deployed VIPRegistry address
 
 // ------------------- WRITE HOOKS ------------------- //
 
@@ -19,7 +19,7 @@ export function useRegisterVIP() {
     hash,
   });
 
-  async function registerVIP(inputEuint32: any, inputProof: `0x${string}`) {
+  async function registerVIP(inputEuint32: any, inputProof: any) {
     try {
       await writeContract({
         abi: FHEZamaVipABI.abi,
