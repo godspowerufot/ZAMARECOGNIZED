@@ -9,7 +9,7 @@ import { Address } from "viem";
 import { Creator, mapContractResponseToCreator } from "@/lib/type";
 
 // Contract address
-const CONTRACT_ADDRESS = "0x7368F2165DEB0548762c2eA5400AE6614D5ab047";
+const CONTRACT_ADDRESS = "0xC32370e7b8F020E627E3C8d48F764AECffFB9D2E";
 
 // ------------------- WRITE HOOKS ------------------- //
 type CreatorTuple = [

@@ -8,8 +8,7 @@ import { FHEZamaVipABI } from "@/abi/Vip";
 import { Address } from "viem";
 
 // Contract address
-const CONTRACT_ADDRESS = "0xc2C7BD895c61173Bb8D4119a8b907622b1aeb5E4"; // replace with deployed VIPRegistry address
-
+const CONTRACT_ADDRESS = "0x32724e731083Ae9aE63a58B127281f7fae5bfD63"; // replace with deployed VIPRegistry address
 // ------------------- WRITE HOOKS ------------------- //
 
 // 1. Register VIP (owner only)
@@ -19,13 +18,17 @@ export function useRegisterVIP() {
     hash,
   });
 
-  async function registerVIP(inputEuint32: any, inputProof: `0x${string}`) {
+  async function registerVIP(
+    vipaddress: Address,
+    inputEuint32: any,
+    inputProof: any
+  ) {
     try {
       await writeContract({
         abi: FHEZamaVipABI.abi,
         address: CONTRACT_ADDRESS,
         functionName: "registerVIP",
-        args: [inputEuint32, inputProof],
+        args: [vipaddress, inputEuint32, inputProof],
       });
     } catch (err) {
       console.error("❌ registerVIP error:", err);

@@ -1,5 +1,5 @@
 export const FHEZamaVipABI = {
-  address: "0xc2C7BD895c61173Bb8D4119a8b907622b1aeb5E4",
+  address: "0x32724e731083Ae9aE63a58B127281f7fae5bfD63",
   abi: [
     {
       inputs: [],
@@ -218,6 +218,11 @@ export const FHEZamaVipABI = {
     },
     {
       inputs: [
+        {
+          internalType: "address",
+          name: "vipAddress",
+          type: "address",
+        },
         {
           internalType: "externalEuint32",
           name: "inputEuint32",

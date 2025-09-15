@@ -23,12 +23,13 @@ export interface VIP {
 }
 
 export interface Recognition {
-  id: string;
+  id?: string;
   creatorId: string;
   reason: string;
   week: string;
-  timestamp: Date;
-  encryptedVIPId?: string;
+  creatorAddress: string;
+  timestamp: number;
+  vipId?: string;
   encryptedReason?: string;
   weekNumber: number;
   creatorName: string;

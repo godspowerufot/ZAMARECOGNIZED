@@ -47,6 +47,7 @@ import { useAccount } from "wagmi";
 import { ethers } from "ethers";
 import { FHEZamaVipABI } from "@/abi/Vip";
 import { useEthersSigner } from "./layout";
+import { FHEZamaRecognizeABI } from "@/abi/ZamaRecognition";
 
 export default function ZamaRecognitionSystem() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -81,6 +82,7 @@ export default function ZamaRecognitionSystem() {
   // 🔗 hook from wagmi
   const { recognizeCreator, isPending, isConfirming, isSuccess, error } =
     useRecognizeCreator();
+
   useEffect(() => {
     const weekNumber = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
     setCurrentWeek(weekNumber);
@@ -104,10 +106,6 @@ export default function ZamaRecognitionSystem() {
     currentCreatorProfile?.hasPendingBadge,
     isCreator,
   ]);
-
-  const handleConnectWallet = () => {
-    setIsWalletConnected(true);
-  };
 
   const handleBecomeVIP = () => {
     if (!isWalletConnected) {
@@ -202,9 +200,34 @@ export default function ZamaRecognitionSystem() {
       // if (!fhe) {
       //   console.log("Still loading FHE...");
       //   return;
-      // }
+      // } const VIPContract = new ethers.Contract(
+      if (!signer) {
+        throw new Error("Signer not available");
+      }
+      const recogContract = new ethers.Contract(
+        FHEZamaRecognizeABI.address,
+        FHEZamaRecognizeABI.abi,
+        signer
+      );
 
-      const contractAddress = "0x4101e9c61F5CEC606A9A9b884469fD15dB270722";
+      const registerTx = await recogContract.recognizeCreator(
+        creator.name,
+        creator.creatorAddress as `0x${string}`, // Type assertion fix
+        reasonText,
+        currentWeek
+      );
+      const receipt = await registerTx.wait();
+
+      console.log("Transaction receipt:", receipt);
+      console.log("🎉 VIP registration transaction sent successfully");
+
+      // const resp = await recognizeCreator(
+      //   creator.name,
+      //   creator.creatorAddress as `0x${string}`, // Type assertion fix
+      //   reasonText,
+      //   currentWeek
+      // );
+      // Simple fix for the handleRecognizeCreator function
 
       // Create encrypted input (string instead of int)
 

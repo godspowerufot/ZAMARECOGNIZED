@@ -8,7 +8,7 @@ import { FHEZamaRecognizeABI } from "@/abi/ZamaRecognition";
 import { Address } from "viem";
 
 // Contract address (replace with deployed RecognitionMain contract)
-const CONTRACT_ADDRESS = "0xEF79BFD2311eEE0F98a1bD653F9fD70cFCe73BB6";
+const CONTRACT_ADDRESS = "0x3844108c86A4e4dd029daBFa81Ae6Db99Db279a0";
 
 // ------------------- WRITE HOOKS ------------------- //
 
@@ -22,7 +22,7 @@ export function useRecognizeCreator() {
   async function recognizeCreator(
     creatorName: string,
     creatorAddress: Address,
-    encryptedReason: `0x${string}`,
+    encryptedReason: string,
     weekNumber: number
   ) {
     try {
