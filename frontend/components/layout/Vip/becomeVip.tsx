@@ -13,14 +13,12 @@ import {
   useGetEncryptedVIPId,
   useBecomeVIPForTesting,
 } from "@/hooks/use-Vip";
-import { useFhe } from "@/config/FheRelayey";
 import { getFheInstance, initializeFheInstance } from "@/utils/fheinstance";
-import { toHex } from "viem";
 import { useEthersSigner } from "@/app/layout";
 import { ethers, hexlify } from "ethers";
 import { FHEZamaVipABI } from "@/abi/Vip";
 
-const CONTRACT_ADDRESS = "0x32724e731083Ae9aE63a58B127281f7fae5bfD63";
+const CONTRACT_ADDRESS = "0x54CD4b0b53cCE73711Db188C663e4278a9Dd90b4";
 
 interface VIPStatusCardProps {
   isVIP: boolean;

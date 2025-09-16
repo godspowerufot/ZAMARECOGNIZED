@@ -4,8 +4,8 @@ export interface Creator {
   name: string;
   avatar: string;
   recognitions: number;
-  isRecognizedThisWeek: boolean;
-  hasPendingBadge: boolean;
+  isRecognizedThisWeek?: boolean;
+  hasPendingBadge?: boolean;
   recognitionStatus: "waiting" | "recognized" | "claimed";
   lastRecognitionWeek?: string;
   creatorAddress?: string;

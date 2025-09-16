@@ -1,5 +1,5 @@
 export const FHEZamaVipABI = {
-  address: "0x32724e731083Ae9aE63a58B127281f7fae5bfD63",
+  address: "0x54CD4b0b53cCE73711Db188C663e4278a9Dd90b4",
   abi: [
     {
       inputs: [],
@@ -34,6 +34,56 @@ export const FHEZamaVipABI = {
         {
           indexed: true,
           internalType: "address",
+          name: "vip",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "creator",
+          type: "address",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "tokenId",
+          type: "uint256",
+        },
+      ],
+      name: "NominationMinted",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "vip",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "creator",
+          type: "address",
+        },
+        {
+          indexed: false,
+          internalType: "uint32",
+          name: "week",
+          type: "uint32",
+        },
+      ],
+      name: "NominationRecorded",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
           name: "previousOwner",
           type: "address",
         },
@@ -59,6 +109,74 @@ export const FHEZamaVipABI = {
       ],
       name: "VIPRegistered",
       type: "event",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      name: "allNominations",
+      outputs: [
+        {
+          internalType: "address",
+          name: "creatorAddress",
+          type: "address",
+        },
+        {
+          internalType: "string",
+          name: "creatorName",
+          type: "string",
+        },
+        {
+          internalType: "string",
+          name: "reason",
+          type: "string",
+        },
+        {
+          internalType: "uint32",
+          name: "weekNumber",
+          type: "uint32",
+        },
+        {
+          internalType: "uint256",
+          name: "timestamp",
+          type: "uint256",
+        },
+        {
+          internalType: "bool",
+          name: "isMinted",
+          type: "bool",
+        },
+        {
+          internalType: "uint256",
+          name: "tokenId",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      name: "allVIPs",
+      outputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
     },
     {
       inputs: [],
@@ -87,6 +205,69 @@ export const FHEZamaVipABI = {
       type: "function",
     },
     {
+      inputs: [],
+      name: "getAllNominations",
+      outputs: [
+        {
+          components: [
+            {
+              internalType: "address",
+              name: "creatorAddress",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "creatorName",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "reason",
+              type: "string",
+            },
+            {
+              internalType: "uint32",
+              name: "weekNumber",
+              type: "uint32",
+            },
+            {
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "isMinted",
+              type: "bool",
+            },
+            {
+              internalType: "uint256",
+              name: "tokenId",
+              type: "uint256",
+            },
+          ],
+          internalType: "struct VIPRegistry.VIPNomination[]",
+          name: "",
+          type: "tuple[]",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "getAllVIPs",
+      outputs: [
+        {
+          internalType: "address[]",
+          name: "",
+          type: "address[]",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
       inputs: [
         {
           internalType: "address",
@@ -100,6 +281,170 @@ export const FHEZamaVipABI = {
           internalType: "euint32",
           name: "",
           type: "bytes32",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_recipient",
+          type: "address",
+        },
+      ],
+      name: "getEncryptedVIPIdAndGrantAccess",
+      outputs: [
+        {
+          internalType: "euint32",
+          name: "",
+          type: "bytes32",
+        },
+      ],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "getSystemNominationStats",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "totalNominations",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "totalMinted",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "totalPending",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "getTotalVIPs",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_vip",
+          type: "address",
+        },
+      ],
+      name: "getVIPNominations",
+      outputs: [
+        {
+          components: [
+            {
+              internalType: "address",
+              name: "creatorAddress",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "creatorName",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "reason",
+              type: "string",
+            },
+            {
+              internalType: "uint32",
+              name: "weekNumber",
+              type: "uint32",
+            },
+            {
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "isMinted",
+              type: "bool",
+            },
+            {
+              internalType: "uint256",
+              name: "tokenId",
+              type: "uint256",
+            },
+          ],
+          internalType: "struct VIPRegistry.VIPNomination[]",
+          name: "",
+          type: "tuple[]",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_vip",
+          type: "address",
+        },
+      ],
+      name: "getVIPStats",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "totalNominations",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "mintedNominations",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "pendingNominations",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint32",
+          name: "_week",
+          type: "uint32",
+        },
+      ],
+      name: "getWeeklyStats",
+      outputs: [
+        {
+          internalType: "address[]",
+          name: "nominators",
+          type: "address[]",
+        },
+        {
+          internalType: "uint256",
+          name: "nominationCount",
+          type: "uint256",
         },
       ],
       stateMutability: "view",
@@ -191,6 +536,34 @@ export const FHEZamaVipABI = {
       type: "function",
     },
     {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_vip",
+          type: "address",
+        },
+        {
+          internalType: "address",
+          name: "_creator",
+          type: "address",
+        },
+        {
+          internalType: "uint32",
+          name: "_week",
+          type: "uint32",
+        },
+        {
+          internalType: "uint256",
+          name: "_tokenId",
+          type: "uint256",
+        },
+      ],
+      name: "markNominationMinted",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
       inputs: [],
       name: "owner",
       outputs: [
@@ -214,6 +587,39 @@ export const FHEZamaVipABI = {
         },
       ],
       stateMutability: "pure",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_vip",
+          type: "address",
+        },
+        {
+          internalType: "address",
+          name: "_creator",
+          type: "address",
+        },
+        {
+          internalType: "string",
+          name: "_creatorName",
+          type: "string",
+        },
+        {
+          internalType: "string",
+          name: "_reason",
+          type: "string",
+        },
+        {
+          internalType: "uint32",
+          name: "_week",
+          type: "uint32",
+        },
+      ],
+      name: "recordNomination",
+      outputs: [],
+      stateMutability: "nonpayable",
       type: "function",
     },
     {
@@ -257,6 +663,141 @@ export const FHEZamaVipABI = {
       name: "transferOwnership",
       outputs: [],
       stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+      ],
+      name: "vipMintedNominations",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      name: "vipNominationHistory",
+      outputs: [
+        {
+          internalType: "address",
+          name: "creatorAddress",
+          type: "address",
+        },
+        {
+          internalType: "string",
+          name: "creatorName",
+          type: "string",
+        },
+        {
+          internalType: "string",
+          name: "reason",
+          type: "string",
+        },
+        {
+          internalType: "uint32",
+          name: "weekNumber",
+          type: "uint32",
+        },
+        {
+          internalType: "uint256",
+          name: "timestamp",
+          type: "uint256",
+        },
+        {
+          internalType: "bool",
+          name: "isMinted",
+          type: "bool",
+        },
+        {
+          internalType: "uint256",
+          name: "tokenId",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+      ],
+      name: "vipTotalNominations",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint32",
+          name: "",
+          type: "uint32",
+        },
+      ],
+      name: "weeklyNominationCount",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint32",
+          name: "",
+          type: "uint32",
+        },
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      name: "weeklyNominators",
+      outputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+      ],
+      stateMutability: "view",
       type: "function",
     },
   ],
