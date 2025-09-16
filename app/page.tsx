@@ -10,17 +10,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Address } from "viem";
 
-import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Trophy,
-  Star,
   Zap,
   Users,
   Award,
-  Wallet,
   Menu,
   X,
   Home,
@@ -45,8 +40,8 @@ import RecognitionCard from "@/components/layout/recognize/recognize";
 import { useRecognizeCreator } from "@/hooks/use-recognize";
 import { useAccount } from "wagmi";
 import { ethers } from "ethers";
-import { FHEZamaVipABI } from "@/abi/Vip";
 import { useEthersSigner } from "./layout";
+import { FHEZamaRecognizeABI } from "@/abi/ZamaRecognition";
 
 export default function ZamaRecognitionSystem() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -60,7 +55,6 @@ export default function ZamaRecognitionSystem() {
   const [showNotification, setShowNotification] = useState(false);
   const [currentWeek, setCurrentWeek] = useState<number>(0);
   const [walletAddress, setWalletAddress] = useState<string>("");
-  const { address, isConnected } = useAccount();
 
   // const fhe = useFhe();
   const signer = useEthersSigner();
@@ -81,6 +75,7 @@ export default function ZamaRecognitionSystem() {
   // 🔗 hook from wagmi
   const { recognizeCreator, isPending, isConfirming, isSuccess, error } =
     useRecognizeCreator();
+
   useEffect(() => {
     const weekNumber = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
     setCurrentWeek(weekNumber);
@@ -104,10 +99,6 @@ export default function ZamaRecognitionSystem() {
     currentCreatorProfile?.hasPendingBadge,
     isCreator,
   ]);
-
-  const handleConnectWallet = () => {
-    setIsWalletConnected(true);
-  };
 
   const handleBecomeVIP = () => {
     if (!isWalletConnected) {
@@ -199,19 +190,50 @@ export default function ZamaRecognitionSystem() {
     const reasonText = recognitionReason.trim() || "Great work this week!";
 
     try {
-      // if (!fhe) {
-      //   console.log("Still loading FHE...");
-      //   return;
-      // }
+      if (!signer) {
+        throw new Error("Signer not available");
+      }
+      // const recogContract = new ethers.Contract(
+      //   FHEZamaRecognizeABI.address,
+      //   FHEZamaRecognizeABI.abi,
+      //   signer
+      // );
 
-      const contractAddress = "0x4101e9c61F5CEC606A9A9b884469fD15dB270722";
+      const registerTx = await recognizeCreator(
+        creator.name,
+        creator.creatorAddress as `0x${string}`,
+        reasonText,
+        currentWeek
+      );
+      // const receipt = await registerTx.wait();
 
-      // Create encrypted input (string instead of int)
+      console.log("Transaction receipt:", registerTx);
+      console.log("🎉 VIP registration transaction sent successfully");
 
       setRecognitionReason("");
       setSelectedCreator(null);
-      console.log("🎉 Recognition submitted successfully!");
-    } catch (err) {
+      setNotifications((prev) => [
+        ...prev,
+        "🎉 Recognition submitted successfully!",
+      ]);
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 5000);
+    } catch (err: any) {
+      // Check if it's the specific "Already nominated this week" error
+      if (err.reason === "Already nominated this week") {
+        setNotifications((prev) => [
+          ...prev,
+          "⚠️ You have already nominated a creator this week. Please wait for next week.",
+        ]);
+      } else {
+        // Handle other errors
+        setNotifications((prev) => [
+          ...prev,
+          "❌ Error: " + (err.reason || "Something went wrong"),
+        ]);
+      }
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 5000);
       console.error("❌ handleRecognizeCreator error:", err);
     }
   };
@@ -267,14 +289,6 @@ export default function ZamaRecognitionSystem() {
     setTimeout(() => setShowNotification(false), 5000);
   };
 
-  const navigationItems = [
-    { id: "dashboard", label: "DASHBOARD", icon: Home },
-    { id: "creators", label: "CREATORS", icon: Users },
-    { id: "profile", label: "CREATOR PROFILE", icon: UserPlus },
-    { id: "recognition", label: "MY RECOGNITION", icon: Award },
-    { id: "vip", label: "BECOME VIP", icon: Crown },
-  ];
-
   return (
     <div className="min-h-screen bg-background flex">
       {showNotification && notifications.length > 0 && (
@@ -315,7 +329,6 @@ export default function ZamaRecognitionSystem() {
             { id: "creators", label: "CREATORS", icon: Users },
             { id: "profile", label: "CREATOR PROFILE", icon: UserPlus },
             { id: "recognition", label: "MY RECOGNITION", icon: Award },
-            { id: "vip", label: "BECOME VIP", icon: Crown },
           ].map((item) => {
             const Icon = item.icon;
             return (
@@ -549,7 +562,7 @@ export default function ZamaRecognitionSystem() {
                 </Card>
               )}
 
-              {/* ... existing cards with enhanced VIP section ... */}
+              {/* ... eregistxisting cards with enhanced VIP section ... */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="bg-card border-border">
                   <CardHeader>
@@ -719,6 +732,8 @@ export default function ZamaRecognitionSystem() {
               {/* ... existing creator cards with enhanced info ... */}
               <CreatorsDirectory
                 isVIP={true}
+                creators={creators}
+                setCreators={setCreators}
                 currentWeek={currentWeek}
                 currentVIPProfile={currentVIPProfile}
                 onSelectCreator={setSelectedCreator}
@@ -730,6 +745,9 @@ export default function ZamaRecognitionSystem() {
                   selectedCreator={selectedCreator}
                   currentVIPProfile={currentVIPProfile}
                   currentWeek={currentWeek}
+                  isPending={isPending}
+                  isConfirming={isConfirming}
+                  isSuccess={isSuccess}
                   recognitionReason={recognitionReason}
                   setRecognitionReason={setRecognitionReason}
                   onSubmit={() => handleRecognizeCreator(selectedCreator)}

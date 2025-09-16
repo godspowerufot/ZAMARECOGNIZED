@@ -21,6 +21,7 @@ import {
   JsonRpcProvider,
   JsonRpcSigner,
 } from "ethers";
+import { AppProvider } from "./providers";
 
 const metadata: Metadata = {
   title: "Zama Recognition System",
@@ -86,7 +87,10 @@ export default function RootLayout({
             <body
               className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}
             >
-              <Suspense fallback={null}>{children}</Suspense>
+              {" "}
+              <FheProvider>
+                <Suspense fallback={null}>{children}</Suspense>
+              </FheProvider>
               <Analytics />
             </body>
           </RainbowKitProvider>

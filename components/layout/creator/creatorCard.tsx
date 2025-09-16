@@ -11,6 +11,8 @@ interface CreatorsDirectoryProps {
   isVIP?: boolean;
   currentWeek?: number;
   currentVIPProfile?: any;
+  creators?: Creator[];
+  setCreators?: (creator: Creator[]) => void;
   onSelectCreator?: (creator: Creator) => void;
 }
 
@@ -18,10 +20,12 @@ const CreatorsDirectory: React.FC<CreatorsDirectoryProps> = ({
   isVIP = false,
   currentWeek = 1,
   currentVIPProfile,
+  setCreators,
+  creators,
   onSelectCreator = () => {},
 }) => {
   const [isNFTMode, setIsNFTMode] = useState(false);
-  const [creators, setCreators] = useState<Creator[]>([]);
+  const [localCreators, setLocalCreators] = useState<Creator[]>([]);
 
   // Blockchain data
   const { data: creatorsData, isLoading, error } = useGetAllCreators();
@@ -29,10 +33,19 @@ const CreatorsDirectory: React.FC<CreatorsDirectoryProps> = ({
   // Process blockchain data
   useEffect(() => {
     if (creatorsData && Array.isArray(creatorsData)) {
-      setCreators(creatorsData);
+      console.log(`Total creators from blockchain: ${creatorsData.length}`);
+      // Use local state if setCreators is not provided
+      if (setCreators) {
+        setCreators(creatorsData);
+      } else {
+        setLocalCreators(creatorsData);
+      }
       console.log("creator profile:", creatorsData);
     }
-  }, [creatorsData]);
+  }, [creatorsData, setCreators]);
+
+  // Use either passed creators or local creators
+  const displayCreators = creators || localCreators;
 
   const toggleMode = () => {
     setIsNFTMode(!isNFTMode);
@@ -211,7 +224,7 @@ const CreatorsDirectory: React.FC<CreatorsDirectoryProps> = ({
       <div className="flex justify-between items-center">
         <div>
           <p className="text-muted-foreground">
-            {creators.length} active creators •{" "}
+            {displayCreators?.length} active creators •{" "}
             {isNFTMode ? "NFT Mode" : "Grid Mode"}
           </p>
         </div>
@@ -228,21 +241,21 @@ const CreatorsDirectory: React.FC<CreatorsDirectoryProps> = ({
       {isNFTMode ? (
         // NFT Mode - Single column on mobile, 2 on tablet, 3 on desktop
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {creators.map((creator) => (
+          {displayCreators?.map((creator) => (
             <NFTCreatorCard key={creator.id} creator={creator} />
           ))}
         </div>
       ) : (
         // Grid Mode - Original layout
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {creators.map((creator) => (
+          {displayCreators?.map((creator) => (
             <GridCreatorCard key={creator.id} creator={creator} />
           ))}
         </div>
       )}
 
       {/* Empty state */}
-      {creators.length === 0 && (
+      {displayCreators?.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground">No creators found</p>
         </div>

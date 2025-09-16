@@ -17,6 +17,10 @@ interface RecognitionCardProps {
   currentVIPProfile: VIP | null;
   currentWeek: number;
   recognitionReason: string;
+  isSubmitting?: boolean;
+  isPending?: boolean;
+  isConfirming?: boolean;
+  isSuccess?: boolean;
   setRecognitionReason: (value: string) => void;
   onSubmit: (creator: Creator) => void;
   onCancel: () => void;
@@ -29,6 +33,10 @@ export default function RecognitionCard({
   recognitionReason,
   setRecognitionReason,
   onSubmit,
+  isSubmitting,
+  isPending,
+  isConfirming,
+  isSuccess,
   onCancel,
 }: RecognitionCardProps) {
   return (
@@ -71,11 +79,25 @@ export default function RecognitionCard({
         <div className="flex space-x-2">
           <Button
             onClick={() => onSubmit(selectedCreator)}
+            disabled={isSubmitting || isPending || isConfirming}
             className="bg-primary text-primary-foreground hover:bg-primary/90 font-gaming"
           >
-            SUBMIT RECOGNITION
+            {isPending
+              ? "PREPARING TRANSACTION..."
+              : isConfirming
+              ? "CONFIRMING RECOGNITION..."
+              : isSubmitting
+              ? "ENCRYPTING RECOGNITION..."
+              : isSuccess
+              ? "RECOGNITION SUBMITTED!"
+              : "SUBMIT RECOGNITION"}
           </Button>
-          <Button variant="outline" onClick={onCancel} className="font-gaming">
+          <Button
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSubmitting || isPending || isConfirming}
+            className="font-gaming"
+          >
             CANCEL
           </Button>
         </div>

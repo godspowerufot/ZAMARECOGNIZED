@@ -1,5 +1,5 @@
 export const FHEZamaRecognizeABI = {
-  address: "0xEF79BFD2311eEE0F98a1bD653F9fD70cFCe73BB6",
+  address: "0xC3613d385f813D08e9B0859833f5abc2e3F1e4C7",
   abi: [
     {
       inputs: [
@@ -254,6 +254,37 @@ export const FHEZamaRecognizeABI = {
         {
           indexed: true,
           internalType: "address",
+          name: "vip",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "creator",
+          type: "address",
+        },
+        {
+          indexed: false,
+          internalType: "uint32",
+          name: "week",
+          type: "uint32",
+        },
+        {
+          indexed: false,
+          internalType: "string",
+          name: "reason",
+          type: "string",
+        },
+      ],
+      name: "RecognitionPending",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
           name: "from",
           type: "address",
         },
@@ -318,6 +349,60 @@ export const FHEZamaRecognizeABI = {
           type: "address",
         },
         {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      name: "creatorRecognitionHistory",
+      outputs: [
+        {
+          internalType: "address",
+          name: "creator",
+          type: "address",
+        },
+        {
+          internalType: "euint32",
+          name: "encryptedVIPId",
+          type: "bytes32",
+        },
+        {
+          internalType: "string",
+          name: "reason",
+          type: "string",
+        },
+        {
+          internalType: "uint32",
+          name: "weekNumber",
+          type: "uint32",
+        },
+        {
+          internalType: "string",
+          name: "creatorName",
+          type: "string",
+        },
+        {
+          internalType: "address",
+          name: "vipAddress",
+          type: "address",
+        },
+        {
+          internalType: "uint256",
+          name: "timestamp",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+        {
           internalType: "uint32",
           name: "",
           type: "uint32",
@@ -350,6 +435,84 @@ export const FHEZamaRecognizeABI = {
     {
       inputs: [
         {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      name: "creatorTokenIds",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+        {
+          internalType: "uint32",
+          name: "",
+          type: "uint32",
+        },
+      ],
+      name: "creatorWeeklyRecognitions",
+      outputs: [
+        {
+          internalType: "address",
+          name: "creator",
+          type: "address",
+        },
+        {
+          internalType: "euint32",
+          name: "encryptedVIPId",
+          type: "bytes32",
+        },
+        {
+          internalType: "string",
+          name: "reason",
+          type: "string",
+        },
+        {
+          internalType: "uint32",
+          name: "weekNumber",
+          type: "uint32",
+        },
+        {
+          internalType: "string",
+          name: "creatorName",
+          type: "string",
+        },
+        {
+          internalType: "address",
+          name: "vipAddress",
+          type: "address",
+        },
+        {
+          internalType: "uint256",
+          name: "timestamp",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
           internalType: "uint256",
           name: "tokenId",
           type: "uint256",
@@ -361,6 +524,279 @@ export const FHEZamaRecognizeABI = {
           internalType: "address",
           name: "",
           type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_creator",
+          type: "address",
+        },
+      ],
+      name: "getCreatorMintedRecognitions",
+      outputs: [
+        {
+          components: [
+            {
+              internalType: "address",
+              name: "creator",
+              type: "address",
+            },
+            {
+              internalType: "euint32",
+              name: "encryptedVIPId",
+              type: "bytes32",
+            },
+            {
+              internalType: "string",
+              name: "reason",
+              type: "string",
+            },
+            {
+              internalType: "uint32",
+              name: "weekNumber",
+              type: "uint32",
+            },
+            {
+              internalType: "string",
+              name: "creatorName",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "vipAddress",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          internalType: "struct ZamaRecognitionMain.Recognition[]",
+          name: "",
+          type: "tuple[]",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_creator",
+          type: "address",
+        },
+      ],
+      name: "getCreatorPendingRecognitions",
+      outputs: [
+        {
+          components: [
+            {
+              internalType: "address",
+              name: "creator",
+              type: "address",
+            },
+            {
+              internalType: "euint32",
+              name: "encryptedVIPId",
+              type: "bytes32",
+            },
+            {
+              internalType: "string",
+              name: "reason",
+              type: "string",
+            },
+            {
+              internalType: "uint32",
+              name: "weekNumber",
+              type: "uint32",
+            },
+            {
+              internalType: "string",
+              name: "creatorName",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "vipAddress",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          internalType: "struct ZamaRecognitionMain.Recognition[]",
+          name: "",
+          type: "tuple[]",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_creator",
+          type: "address",
+        },
+      ],
+      name: "getCreatorRecognitionHistory",
+      outputs: [
+        {
+          components: [
+            {
+              internalType: "address",
+              name: "creator",
+              type: "address",
+            },
+            {
+              internalType: "euint32",
+              name: "encryptedVIPId",
+              type: "bytes32",
+            },
+            {
+              internalType: "string",
+              name: "reason",
+              type: "string",
+            },
+            {
+              internalType: "uint32",
+              name: "weekNumber",
+              type: "uint32",
+            },
+            {
+              internalType: "string",
+              name: "creatorName",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "vipAddress",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          internalType: "struct ZamaRecognitionMain.Recognition[]",
+          name: "",
+          type: "tuple[]",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_creator",
+          type: "address",
+        },
+      ],
+      name: "getCreatorRecognitionSummary",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "totalCount",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "mintedCount",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "pendingCount",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256[]",
+          name: "tokenIds",
+          type: "uint256[]",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_creator",
+          type: "address",
+        },
+        {
+          internalType: "uint32",
+          name: "_week",
+          type: "uint32",
+        },
+      ],
+      name: "getCreatorWeeklyRecognition",
+      outputs: [
+        {
+          internalType: "bool",
+          name: "hasRecognition",
+          type: "bool",
+        },
+        {
+          internalType: "bool",
+          name: "isMinted",
+          type: "bool",
+        },
+        {
+          components: [
+            {
+              internalType: "address",
+              name: "creator",
+              type: "address",
+            },
+            {
+              internalType: "euint32",
+              name: "encryptedVIPId",
+              type: "bytes32",
+            },
+            {
+              internalType: "string",
+              name: "reason",
+              type: "string",
+            },
+            {
+              internalType: "uint32",
+              name: "weekNumber",
+              type: "uint32",
+            },
+            {
+              internalType: "string",
+              name: "creatorName",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "vipAddress",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          internalType: "struct ZamaRecognitionMain.Recognition",
+          name: "weeklyRecognition",
+          type: "tuple",
         },
       ],
       stateMutability: "view",
@@ -422,6 +858,73 @@ export const FHEZamaRecognizeABI = {
           internalType: "string",
           name: "",
           type: "string",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "getSystemStats",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "totalCount",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "mintedCount",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "pendingCount",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "totalCreators",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "totalVIPs",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint32",
+          name: "_week",
+          type: "uint32",
+        },
+      ],
+      name: "getWeeklyRecognitionData",
+      outputs: [
+        {
+          internalType: "address[]",
+          name: "recognizedCreators",
+          type: "address[]",
+        },
+        {
+          internalType: "address[]",
+          name: "nominatingVIPs",
+          type: "address[]",
+        },
+        {
+          internalType: "uint256",
+          name: "totalCount",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "mintedCount",
+          type: "uint256",
         },
       ],
       stateMutability: "view",
@@ -573,6 +1076,16 @@ export const FHEZamaRecognizeABI = {
           name: "creatorName",
           type: "string",
         },
+        {
+          internalType: "address",
+          name: "vipAddress",
+          type: "address",
+        },
+        {
+          internalType: "uint256",
+          name: "timestamp",
+          type: "uint256",
+        },
       ],
       stateMutability: "view",
       type: "function",
@@ -624,6 +1137,16 @@ export const FHEZamaRecognizeABI = {
           internalType: "string",
           name: "creatorName",
           type: "string",
+        },
+        {
+          internalType: "address",
+          name: "vipAddress",
+          type: "address",
+        },
+        {
+          internalType: "uint256",
+          name: "timestamp",
+          type: "uint256",
         },
       ],
       stateMutability: "view",
@@ -786,6 +1309,32 @@ export const FHEZamaRecognizeABI = {
     },
     {
       inputs: [],
+      name: "totalMintedRecognitions",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "totalPendingRecognitions",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
       name: "totalSupply",
       outputs: [
         {
@@ -841,6 +1390,30 @@ export const FHEZamaRecognizeABI = {
           internalType: "contract VIPRegistry",
           name: "",
           type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint32",
+          name: "",
+          type: "uint32",
+        },
+      ],
+      name: "weeklyData",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "totalRecognitions",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "mintedCount",
+          type: "uint256",
         },
       ],
       stateMutability: "view",

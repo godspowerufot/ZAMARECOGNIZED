@@ -4,8 +4,8 @@ export interface Creator {
   name: string;
   avatar: string;
   recognitions: number;
-  isRecognizedThisWeek: boolean;
-  hasPendingBadge: boolean;
+  isRecognizedThisWeek?: boolean;
+  hasPendingBadge?: boolean;
   recognitionStatus: "waiting" | "recognized" | "claimed";
   lastRecognitionWeek?: string;
   creatorAddress?: string;
@@ -23,12 +23,13 @@ export interface VIP {
 }
 
 export interface Recognition {
-  id: string;
+  id?: string;
   creatorId: string;
   reason: string;
   week: string;
-  timestamp: Date;
-  encryptedVIPId?: string;
+  creatorAddress: string;
+  timestamp: number;
+  vipId?: string;
   encryptedReason?: string;
   weekNumber: number;
   creatorName: string;

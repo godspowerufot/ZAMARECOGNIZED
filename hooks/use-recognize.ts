@@ -7,8 +7,35 @@ import {
 import { FHEZamaRecognizeABI } from "@/abi/ZamaRecognition";
 import { Address } from "viem";
 
+// ------------------- TYPES ------------------- //
+
+export interface Recognition {
+  creator: Address;
+  encryptedVIPId: any; // euint32 type from contract
+  reason: string;
+  weekNumber: bigint;
+  creatorName: string;
+  vipAddress: Address;
+  timestamp: bigint;
+}
+
+export interface WeeklyRecognitionData {
+  recognizedCreators: Address[];
+  nominatingVIPs: Address[];
+  totalRecognitions: bigint;
+  mintedCount: bigint;
+}
+
+export interface SystemStats {
+  totalCount: bigint;
+  mintedCount: bigint;
+  pendingCount: bigint;
+  totalCreators: bigint;
+  totalVIPs: bigint;
+}
+
 // Contract address (replace with deployed RecognitionMain contract)
-const CONTRACT_ADDRESS = "0xEF79BFD2311eEE0F98a1bD653F9fD70cFCe73BB6";
+const CONTRACT_ADDRESS = "0xc0ccA917853A15EABd54F2BEb01Ca72dfafB38d1";
 
 // ------------------- WRITE HOOKS ------------------- //
 
@@ -22,7 +49,7 @@ export function useRecognizeCreator() {
   async function recognizeCreator(
     creatorName: string,
     creatorAddress: Address,
-    encryptedReason: `0x${string}`,
+    encryptedReason: string,
     weekNumber: number
   ) {
     try {
@@ -115,5 +142,97 @@ export function useTotalSupply() {
     abi: FHEZamaRecognizeABI.abi,
     address: CONTRACT_ADDRESS,
     functionName: "totalSupply",
+  });
+}
+
+// ------------------- NEW QUERY HOOKS ------------------- //
+
+// Get Creator Recognition Summary
+export function useCreatorRecognitionSummary(creator: Address) {
+  return useReadContract({
+    abi: FHEZamaRecognizeABI.abi,
+    address: CONTRACT_ADDRESS,
+    functionName: "getCreatorRecognitionSummary",
+    args: [creator],
+  });
+}
+
+// Get Creator Pending Recognitions
+export function useCreatorPendingRecognitions(creator: Address) {
+  return useReadContract({
+    abi: FHEZamaRecognizeABI.abi,
+    address: CONTRACT_ADDRESS,
+    functionName: "getCreatorPendingRecognitions",
+    args: [creator],
+  });
+}
+
+// Get Creator Minted Recognitions
+export function useCreatorMintedRecognitions(creator: Address) {
+  return useReadContract({
+    abi: FHEZamaRecognizeABI.abi,
+    address: CONTRACT_ADDRESS,
+    functionName: "getCreatorMintedRecognitions",
+    args: [creator],
+  });
+}
+
+// Get Creator Recognition History
+export function useCreatorRecognitionHistory(creator: Address) {
+  return useReadContract({
+    abi: FHEZamaRecognizeABI.abi,
+    address: CONTRACT_ADDRESS,
+    functionName: "getCreatorRecognitionHistory",
+    args: [creator],
+  });
+}
+
+// Get Creator Weekly Recognition
+export function useCreatorWeeklyRecognition(creator: Address, week: number) {
+  return useReadContract({
+    abi: FHEZamaRecognizeABI.abi,
+    address: CONTRACT_ADDRESS,
+    functionName: "getCreatorWeeklyRecognition",
+    args: [creator, BigInt(week)],
+  });
+}
+
+// Get Weekly Recognition Data
+export function useWeeklyRecognitionData(week: number) {
+  return useReadContract({
+    abi: FHEZamaRecognizeABI.abi,
+    address: CONTRACT_ADDRESS,
+    functionName: "getWeeklyRecognitionData",
+    args: [BigInt(week)],
+  });
+}
+
+// Get System Stats
+export function useSystemStats() {
+  return useReadContract({
+    abi: FHEZamaRecognizeABI.abi,
+    address: CONTRACT_ADDRESS,
+    functionName: "getSystemStats",
+    args: [],
+  });
+}
+
+// Get Recognition Reason
+export function useRecognitionReason(tokenId: bigint) {
+  return useReadContract({
+    abi: FHEZamaRecognizeABI.abi,
+    address: CONTRACT_ADDRESS,
+    functionName: "getRecognitionReason",
+    args: [tokenId],
+  });
+}
+
+// Get Recognition Details for Owner
+export function useMyRecognitionDetails(tokenId: bigint) {
+  return useReadContract({
+    abi: FHEZamaRecognizeABI.abi,
+    address: CONTRACT_ADDRESS,
+    functionName: "getMyRecognitionDetails",
+    args: [tokenId],
   });
 }
