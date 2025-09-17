@@ -1,0 +1,20 @@
+{
+  "deploymentSummary": {
+    "VIPRegistry": {
+      "status": "reused",
+      "address": "0x54CD4b0b53cCE73711Db188C663e4278a9Dd90b4"
+    },
+    "CreatorRegistry": {
+      "status": "deployed",
+      "transactionHash": "0x296c4bfd28efb3d0815533dac6a7353cda6ef6f65bbf465459e193673ed14b46",
+      "address": "0xF96f06489c2136C89D1Bca3A0B84372BCB34c8ce",
+      "gasUsed": 899122
+    },
+    "ZamaRecognitionMain": {
+      "status": "deployed",
+      "transactionHash": "0xa6a19c24e379a8bc4e774dfcc61e22fb456fa8a928ac23642320009cdb30877a",
+      "address": "0xc0ccA917853A15EABd54F2BEb01Ca72dfafB38d1",
+      "gasUsed": 3051931
+    }
+  }
+}
