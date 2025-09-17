@@ -28,7 +28,7 @@
 ## Project Overview
 
 Zama Recognition is a blockchain-powered recognition system aimed at rewarding and recording creator achievements on the Zama chain. The key privacy-preserving innovation is that VIP nominators are **encrypted** before being recorded so creators can verify nominations while the VIPs' identities remain protected from public exposure, helping to reduce online harassment or targeted attacks.
-
+watch the video here [Zama YT Video](https://youtu.be/asDzOauM9fI)
 Creators can:
 
 - Create and manage a profile
