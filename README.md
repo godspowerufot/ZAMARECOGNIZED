@@ -104,7 +104,14 @@ Creators can track recognition history, see stats, and mint recognitions as NFTs
 
 ![Creator Profile](./assets/directory.png)
 
----
+### Test screenshot
+
+![Test](./assets//testcases1.png)
+![Test2](./assets/testcases2.png)
+
+## encryption proof using zama
+
+## ![Zama](./assets/./verifyproof.png)
 
 ## Getting Started (Run Locally)
 
@@ -194,13 +201,3 @@ This project is licensed under the MIT License.
 - GitHub: [godspowerufot](https://github.com/godspowerufot)
 
 ---
-
-## Key Fixes Applied
-
-✅ **Fixed issues:**
-
-- Removed extra backticks that broke code blocks
-- Properly indented bullet lists
-- Cleaned table alignment
-- Fixed headings & spacing so screenshots and sections render well
-- Ensured proper markdown syntax throughout
