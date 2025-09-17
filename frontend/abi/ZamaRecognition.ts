@@ -1,5 +1,5 @@
 export const FHEZamaRecognizeABI = {
-  address: "0xC3613d385f813D08e9B0859833f5abc2e3F1e4C7",
+  address: "0xc0ccA917853A15EABd54F2BEb01Ca72dfafB38d1",
   abi: [
     {
       inputs: [
