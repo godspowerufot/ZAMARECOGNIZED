@@ -17,7 +17,7 @@
 - [Security & Privacy](#security--privacy)
 - [Developer Notes & Contract Details](#developer-notes--contract-details)
 - [Future Work / V2 Wishlist](#future-work--v2-wishlist)
-- [VIP Criteria — Request to the Zama Body](#vip-criteria---request-to-the-zama-body)
+- [VIP Criteria — Request to the Zama Body](#vip-criteria--request-to-the-zama-body)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
@@ -26,7 +26,7 @@
 
 ## Project Overview
 
-Zama Recognition is a blockchain-powered recognition system aimed at rewarding and recording creator achievements on the Zama chain. The key privacy-preserving innovation is that VIP nominators are **encrypted** before being recorded so creators can verify nominations while the VIPs’ identities remain protected from public exposure, helping to reduce online harassment or targeted attacks.
+Zama Recognition is a blockchain-powered recognition system aimed at rewarding and recording creator achievements on the Zama chain. The key privacy-preserving innovation is that VIP nominators are **encrypted** before being recorded so creators can verify nominations while the VIPs' identities remain protected from public exposure, helping to reduce online harassment or targeted attacks.
 
 Creators can:
 
@@ -37,7 +37,7 @@ Creators can:
 
 VIPs can:
 
-- Become a VIP (test flow available “Become VIP”)
+- Become a VIP (test flow available "Become VIP")
 - Nominate creators with a reason (encrypted)
 - Their nomination is recorded and can be verified by creators but not publicly exposed
 
@@ -91,20 +91,16 @@ VIPs can:
 
 ## Screenshots
 
----
+### Dashboard Overview
 
-### Dashboard overview
-
-![dashboard](./assets//dashboard.png)
+![dashboard](./assets/dashboard.png)
 
 ### 🔹 Creator Dashboard
 
 Creators can track recognition history, see stats, and mint recognitions as NFTs.  
 ![Creator Dashboard](./assets/history.png)
 
----
-
-### 🔹 view all creators
+### 🔹 View All Creators
 
 ![Creator Profile](./assets/directory.png)
 
@@ -113,12 +109,11 @@ Creators can track recognition history, see stats, and mint recognitions as NFTs
 ## Getting Started (Run Locally)
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/godspowerufot/zama-recognition.git
    cd zama-recognition
    ```
-
-````
 
 2. Install dependencies:
 
@@ -133,7 +128,6 @@ Creators can track recognition history, see stats, and mint recognitions as NFTs
    ```
 
 4. Deploy contracts:
-
    ```bash
    npx hardhat run deploy/deploy.ts --network zama
    ```
@@ -142,27 +136,27 @@ Creators can track recognition history, see stats, and mint recognitions as NFTs
 
 ## Security & Privacy
 
-* Encrypted VIP addresses prevent harassment or retaliation.
-* Only creators can see that they were nominated, without VIP exposure.
-* On-chain recognition ensures transparency and immutability.
+- Encrypted VIP addresses prevent harassment or retaliation.
+- Only creators can see that they were nominated, without VIP exposure.
+- On-chain recognition ensures transparency and immutability.
 
 ---
 
 ## Developer Notes & Contract Details
 
-* **Frontend:** Next.js (with ethers.js integration).
-* **Smart Contracts:** Hardhat + Zama blockchain environment.
-* **Testing:** Hardhat tests cover VIP registration, creator recognition, and NFT minting.
-* **Deployment:** See `contracts/deploy/deploy.ts` for deployment scripts.
+- **Frontend:** Next.js (with ethers.js integration).
+- **Smart Contracts:** Hardhat + Zama blockchain environment.
+- **Testing:** Hardhat tests cover VIP registration, creator recognition, and NFT minting.
+- **Deployment:** See `contracts/deploy/deploy.ts` for deployment scripts.
 
 ---
 
 ## Future Work / V2 Wishlist
 
-* Add **stricter VIP criteria** (community/governance validation).
-* Recognition badges with **tiers/levels**.
-* Creator leaderboard and **social graph integration**.
-* Integration with **X (Twitter) API** for seamless sharing of recognition NFTs.
+- Add **stricter VIP criteria** (community/governance validation).
+- Recognition badges with **tiers/levels**.
+- Creator leaderboard and **social graph integration**.
+- Integration with **X (Twitter) API** for seamless sharing of recognition NFTs.
 
 ---
 
@@ -171,10 +165,10 @@ Creators can track recognition history, see stats, and mint recognitions as NFTs
 Currently, anyone can become a VIP (testing purpose).
 For V2, I propose that the Zama governing body help define:
 
-* Minimum on-chain activity threshold
-* Governance participation history
-* Community contribution metrics
-* Possible KYC/verification for high-tier VIPs
+- Minimum on-chain activity threshold
+- Governance participation history
+- Community contribution metrics
+- Possible KYC/verification for high-tier VIPs
 
 This will help ensure the system is credible and harder to game.
 
@@ -196,10 +190,17 @@ This project is licensed under the MIT License.
 
 👤 **Godspower Ufot**
 
-* Twitter/X: [@ufotgodspower8](https://x.com/ufotgodspower8)
-* GitHub: [godspowerufot](https://github.com/godspowerufot)
+- Twitter/X: [@ufotgodspower8](https://x.com/ufotgodspower8)
+- GitHub: [godspowerufot](https://github.com/godspowerufot)
 
-```
+---
 
-```
-````
+## Key Fixes Applied
+
+✅ **Fixed issues:**
+
+- Removed extra backticks that broke code blocks
+- Properly indented bullet lists
+- Cleaned table alignment
+- Fixed headings & spacing so screenshots and sections render well
+- Ensured proper markdown syntax throughout
