@@ -29,6 +29,7 @@ import {
   Hash,
   Calendar,
   BarChart3,
+  Loader2,
 } from "lucide-react";
 import WalletConnect from "@/components/ConnectButton";
 import CreatorProfile from "@/components/layout/creatorprofile";
@@ -37,11 +38,23 @@ import CreatorsDirectory from "@/components/layout/creator/creatorCard";
 import VIPStatusCard from "@/components/layout/Vip/becomeVip";
 import RecognitionCard from "@/components/layout/recognize/recognize";
 // import { useFhe } from "@/config/FheRelayey";
-import { useRecognizeCreator } from "@/hooks/use-recognize";
+import {
+  useRecognizeCreator,
+  useGetCurrentWeek,
+  useSystemStats,
+  useWeeklyRecognitionData,
+  useCreatorRecognitionHistory,
+  useCreatorRecognitionSummary,
+  useCreatorPendingRecognitions,
+  useMintRecognitionCard,
+  useCreatorMintedRecognitions,
+} from "@/hooks/use-recognize";
 import { useAccount } from "wagmi";
 import { ethers } from "ethers";
 import { useEthersSigner } from "./layout";
 import { FHEZamaRecognizeABI } from "@/abi/ZamaRecognition";
+import RecognitionHistory from "@/components/layout/recognize/recoghistory";
+import RecognitionStats from "@/components/layout/recognize/recogstat";
 
 export default function ZamaRecognitionSystem() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -71,15 +84,54 @@ export default function ZamaRecognitionSystem() {
 
   const [creators, setCreators] = useState<Creator[]>([]);
 
+  {
+    /* Move hooks to top level */
+  }
+
   const [recognitions, setRecognitions] = useState<Recognition[]>([]);
-  // 🔗 hook from wagmi
+  // Recognition hooks
   const { recognizeCreator, isPending, isConfirming, isSuccess, error } =
     useRecognizeCreator();
+  const { data: currentWeekData } = useGetCurrentWeek();
+  // Get pending recognitions for the current creator
+  const { data: pendingRecognitions } = useCreatorPendingRecognitions(
+    currentCreatorProfile?.creatorAddress as `0x${string}`
+  );
+  const { mintMyRecognitionCard, isPending: isMinting } =
+    useMintRecognitionCard();
+  const { data: creatorMintedRecognitions, isLoading: isMintedLoading } =
+    useCreatorMintedRecognitions(
+      currentCreatorProfile?.creatorAddress as `0x${string}`
+    );
+  const safePendingRecognitions = Array.isArray(pendingRecognitions)
+    ? pendingRecognitions
+    : [];
+  const { data: systemStats } = useSystemStats() as {
+    data: number[] | undefined;
+  };
 
+  const { data: weeklyData } = useWeeklyRecognitionData(currentWeek);
+  console.log("Weekly Recognition Data:", weeklyData);
+
+  // If creator is logged in, get their recognitions
+  const { data: creatorRecognitions, isLoading: isRecognitionsLoading } =
+    useCreatorRecognitionHistory(
+      currentCreatorProfile?.creatorAddress as `0x${string}`
+    );
+  console.log("Creator Recognition History:", creatorRecognitions);
+
+  // Get creator stats if logged in
+  const { data: creatorStats } = useCreatorRecognitionSummary(
+    currentCreatorProfile?.creatorAddress as `0x${string}`
+  );
+  console.log("Creator Recognition Stats:", creatorStats);
+
+  console.log("Pending Recognitions:", safePendingRecognitions);
   useEffect(() => {
-    const weekNumber = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
-    setCurrentWeek(weekNumber);
-  }, []);
+    if (currentWeekData) {
+      setCurrentWeek(Number(currentWeekData));
+    }
+  }, [currentWeekData]);
 
   useEffect(() => {
     if (
@@ -193,21 +245,21 @@ export default function ZamaRecognitionSystem() {
       if (!signer) {
         throw new Error("Signer not available");
       }
-      // const recogContract = new ethers.Contract(
-      //   FHEZamaRecognizeABI.address,
-      //   FHEZamaRecognizeABI.abi,
-      //   signer
-      // );
+      const recogContract = new ethers.Contract(
+        FHEZamaRecognizeABI.address,
+        FHEZamaRecognizeABI.abi,
+        signer
+      );
 
-      const registerTx = await recognizeCreator(
+      const registerTx = await recogContract.recognizeCreator(
         creator.name,
         creator.creatorAddress as `0x${string}`,
         reasonText,
         currentWeek
       );
-      // const receipt = await registerTx.wait();
+      const receipt = await registerTx.wait();
 
-      console.log("Transaction receipt:", registerTx);
+      console.log("Transaction receipt:", receipt);
       console.log("🎉 VIP registration transaction sent successfully");
 
       setRecognitionReason("");
@@ -415,11 +467,12 @@ export default function ZamaRecognitionSystem() {
             <div className="space-y-6">
               <div className="text-center space-y-4">
                 <h2 className="font-gaming text-3xl text-primary">
-                  DIGITAL RECOGNITION SYSTEM
+                  ZAMA CREATORS RECOGNITION SYSTEM
                 </h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
-                  Like a digital "Employee of the Month" program for creators,
+                  Like a digital "Creators of the Month" program for creators,
                   with privacy features built in using encrypted VIP identities.
+                  Be recognized for helping the community!
                 </p>
               </div>
 
@@ -446,9 +499,12 @@ export default function ZamaRecognitionSystem() {
                         </div>
                       </div>
                       <Button
-                        onClick={() =>
-                          handleMintBadge(currentCreatorProfile.id)
-                        }
+                        onClick={() => {
+                          if (currentCreatorProfile?.id) {
+                            handleMintBadge(currentCreatorProfile.id);
+                          }
+                        }}
+                        disabled={!currentCreatorProfile?.id}
                         className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-gaming text-xs"
                       >
                         <Gift className="mr-1 h-3 w-3" />
@@ -524,7 +580,7 @@ export default function ZamaRecognitionSystem() {
                               </p>
                               {recognitions.find(
                                 (r) =>
-                                  r.creatorId === currentCreatorProfile.id &&
+                                  r.creatorId === currentCreatorProfile?.id &&
                                   r.tokenId
                               )?.tokenId && (
                                 <div className="flex items-center space-x-1 mt-1">
@@ -633,18 +689,18 @@ export default function ZamaRecognitionSystem() {
                 </Card>
               </div>
 
-              {/* ... existing stats cards ... */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* System Stats Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 <Card className="bg-card border-border">
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-2">
-                      <Users className="h-8 w-8 text-primary" />
+                      <Trophy className="h-8 w-8 text-primary" />
                       <div>
                         <p className="font-gaming text-2xl text-primary">
-                          {creators.length}
+                          {systemStats ? Number(systemStats[0]) : 0}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          REGISTERED CREATORS
+                          TOTAL COUNT
                         </p>
                       </div>
                     </div>
@@ -657,10 +713,10 @@ export default function ZamaRecognitionSystem() {
                       <Award className="h-8 w-8 text-secondary" />
                       <div>
                         <p className="font-gaming text-2xl text-secondary">
-                          {creators.reduce((sum, c) => sum + c.recognitions, 0)}
+                          {systemStats ? Number(systemStats[1]) : 0}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          TOTAL RECOGNITIONS
+                          MINTED RECOGNITIONS
                         </p>
                       </div>
                     </div>
@@ -670,16 +726,45 @@ export default function ZamaRecognitionSystem() {
                 <Card className="bg-card border-border">
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-2">
-                      <Zap className="h-8 w-8 text-primary" />
+                      <Clock className="h-8 w-8 text-primary" />
                       <div>
                         <p className="font-gaming text-2xl text-primary">
-                          {
-                            creators.filter((c) => c.isRecognizedThisWeek)
-                              .length
-                          }
+                          {systemStats ? Number(systemStats[2]) : 0}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          THIS WEEK
+                          PENDING RECOGNITIONS
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-card border-border">
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-2">
+                      <Users className="h-8 w-8 text-secondary" />
+                      <div>
+                        <p className="font-gaming text-2xl text-secondary">
+                          {systemStats ? Number(systemStats[3]) : 0}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          TOTAL CREATORS
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-card border-border">
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-2">
+                      <Crown className="h-8 w-8 text-primary" />
+                      <div>
+                        <p className="font-gaming text-2xl text-primary">
+                          {systemStats ? Number(systemStats[4]) : 0}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          TOTAL VIPs
                         </p>
                       </div>
                     </div>
@@ -688,7 +773,6 @@ export default function ZamaRecognitionSystem() {
               </div>
             </div>
           )}
-
           {/* ... existing creators tab with enhanced VIP info ... */}
           {activeTab === "creators" && (
             <div className="space-y-6">
@@ -756,7 +840,6 @@ export default function ZamaRecognitionSystem() {
               )}
             </div>
           )}
-
           {/* ... existing profile tab with enhanced form ... */}
           {activeTab === "profile" && (
             <CreatorProfile
@@ -774,7 +857,8 @@ export default function ZamaRecognitionSystem() {
               currentWeek={currentWeek}
             />
           )}
-
+          {/* // Fixed section for the recognition tab - replace the problematic
+          section around lines 650-700 */}
           {activeTab === "recognition" && (
             <div className="space-y-6">
               <div className="text-center space-y-4">
@@ -820,250 +904,152 @@ export default function ZamaRecognitionSystem() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      {currentCreatorProfile?.hasPendingBadge ? (
-                        <div className="bg-secondary/10 border border-secondary p-4 space-y-4">
-                          <div className="flex items-center space-x-3">
-                            <Bell className="h-8 w-8 text-secondary animate-bounce" />
-                            <div>
-                              <p className="font-gaming text-lg text-secondary">
-                                🎉 RECOGNITION RECEIVED!
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                Congratulations! You've been recognized this
-                                week by a VIP member.
-                              </p>
-                              <div className="flex items-center space-x-2 mt-2">
-                                <Shield className="h-4 w-4 text-muted-foreground" />
-                                <span className="text-xs text-muted-foreground">
-                                  VIP identity encrypted for privacy
-                                </span>
-                              </div>
-                            </div>
-                          </div>
+                      {(() => {
+                        const hasPendingRecognition =
+                          safePendingRecognitions.length > 0;
 
-                          <div className="flex items-center justify-between pt-4 border-t border-border">
-                            <div>
-                              <p className="font-gaming text-sm">
-                                READY TO MINT NFT BADGE
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                Click below to mint your recognition as an NFT
-                                badge (gas fees apply)
-                              </p>
-                            </div>
-                            <Button
-                              onClick={() =>
-                                handleMintBadge(currentCreatorProfile.id)
-                              }
-                              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-gaming"
-                            >
-                              <Gift className="mr-2 h-4 w-4" />
-                              MINT NFT BADGE
-                            </Button>
-                          </div>
-                        </div>
-                      ) : currentCreatorProfile?.recognitionStatus ===
-                        "claimed" ? (
-                        <div className="bg-primary/10 border border-primary p-4">
-                          <div className="flex items-center space-x-3">
-                            <CheckCircle className="h-8 w-8 text-primary" />
-                            <div>
-                              <p className="font-gaming text-lg text-primary">
-                                NFT BADGE MINTED!
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                Your recognition NFT has been successfully
-                                minted for week {currentWeek}.
-                              </p>
-                              {recognitions.find(
-                                (r) =>
-                                  r.creatorId === currentCreatorProfile.id &&
-                                  r.tokenId
-                              )?.tokenId && (
-                                <div className="flex items-center space-x-2 mt-2">
-                                  <Hash className="h-4 w-4 text-primary" />
-                                  <span className="text-sm text-primary font-gaming">
-                                    TOKEN #
-                                    {
-                                      recognitions.find(
-                                        (r) =>
-                                          r.creatorId ===
-                                            currentCreatorProfile.id &&
-                                          r.tokenId
-                                      )?.tokenId
-                                    }
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="bg-muted/50 border border-border p-4">
-                          <div className="flex items-center space-x-3">
-                            <Clock className="h-8 w-8 text-muted-foreground" />
-                            <div>
-                              <p className="font-gaming text-lg">
-                                WAITING FOR RECOGNITION
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                Your profile is live! VIPs are browsing creators
-                                and recognizing good work.
-                              </p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                Think of it like waiting to be nominated for an
-                                award.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-
-                  {/* Recognition History */}
-                  <Card className="bg-card border-border">
-                    <CardHeader>
-                      <CardTitle className="font-gaming text-primary flex items-center">
-                        <Trophy className="mr-2 h-5 w-5" />
-                        RECOGNITION HISTORY
-                      </CardTitle>
-                      <CardDescription>
-                        Your past recognition NFT badges and achievements
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      {recognitions.filter(
-                        (r) => r.creatorId === currentCreatorProfile?.id
-                      ).length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {recognitions
-                            .filter(
-                              (r) => r.creatorId === currentCreatorProfile?.id
-                            )
-                            .map((recognition) => (
-                              <div
-                                key={recognition.id}
-                                className="bg-muted/30 border border-border p-4"
-                              >
-                                <div className="flex items-center justify-between mb-3">
-                                  <Badge
-                                    variant="outline"
-                                    className="font-gaming text-xs"
-                                  >
-                                    WEEK {recognition.weekNumber}
-                                  </Badge>
-                                  {recognition.tokenId && (
-                                    <Badge
-                                      variant="default"
-                                      className="font-gaming text-xs"
-                                    >
-                                      TOKEN #{recognition.tokenId}
-                                    </Badge>
-                                  )}
-                                </div>
-
-                                <div className="space-y-2">
-                                  <p className="font-gaming text-sm text-primary">
-                                    RECOGNITION CARD #
-                                    {recognition.tokenId || "PENDING"}
+                        if (hasPendingRecognition) {
+                          const latestPending = safePendingRecognitions[0];
+                          return (
+                            <div className="bg-secondary/10 border border-secondary p-4 space-y-4">
+                              <div className="flex items-center space-x-3">
+                                <Bell className="h-8 w-8 text-secondary animate-bounce" />
+                                <div>
+                                  <p className="font-gaming text-lg text-secondary">
+                                    🎉 RECOGNITION RECEIVED!
                                   </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    Weekly recognition for creator:{" "}
-                                    {currentCreatorProfile?.name}
+                                  <p className="text-sm text-muted-foreground">
+                                    Congratulations! You've been recognized for
+                                    Week {latestPending.weekNumber.toString()}
                                   </p>
-
-                                  {recognition.encryptedReason && (
-                                    <div className="bg-background/50 p-2 border border-border">
-                                      <p className="text-xs text-muted-foreground mb-1">
-                                        Encrypted Recognition Reason:
-                                      </p>
-                                      <p className="font-mono text-xs text-primary break-all">
-                                        {recognition.encryptedReason}
-                                      </p>
-                                    </div>
-                                  )}
-
-                                  <div className="flex items-center space-x-2 pt-2">
-                                    <Shield className="h-3 w-3 text-muted-foreground" />
+                                  <div className="flex items-center space-x-2 mt-2">
+                                    <Shield className="h-4 w-4 text-muted-foreground" />
                                     <span className="text-xs text-muted-foreground">
-                                      VIP identity protected
+                                      Recognition Reason: {latestPending.reason}
                                     </span>
                                   </div>
                                 </div>
                               </div>
-                            ))}
-                        </div>
-                      ) : (
-                        <div className="text-center py-8">
-                          <Award className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                          <p className="font-gaming text-sm text-muted-foreground">
-                            NO RECOGNITION HISTORY YET
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Keep creating great content! VIPs will recognize
-                            your work.
-                          </p>
-                        </div>
-                      )}
+
+                              <div className="flex items-center justify-between pt-4 border-t border-border">
+                                <div>
+                                  <p className="font-gaming text-sm">
+                                    READY TO MINT NFT BADGE
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    Click below to mint your recognition as an
+                                    NFT badge
+                                  </p>
+                                </div>
+                                <Button
+                                  onClick={() =>
+                                    mintMyRecognitionCard(
+                                      Number(latestPending.weekNumber)
+                                    )
+                                  }
+                                  disabled={isMinting}
+                                  className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-gaming"
+                                >
+                                  {isMinting ? (
+                                    <>
+                                      <Clock className="mr-2 h-4 w-4 animate-spin" />
+                                      MINTING...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Gift className="mr-2 h-4 w-4" />
+                                      MINT NFT BADGE
+                                    </>
+                                  )}
+                                </Button>
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        // If no pending recognitions but already claimed this week
+                        if (
+                          currentCreatorProfile?.recognitionStatus === "claimed"
+                        ) {
+                          return (
+                            <div className="bg-primary/10 border border-primary p-4">
+                              <div className="flex items-center space-x-3">
+                                <CheckCircle className="h-8 w-8 text-primary" />
+                                <div>
+                                  <p className="font-gaming text-lg text-primary">
+                                    NFT BADGE MINTED!
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">
+                                    Your recognition NFT has been successfully
+                                    minted for week {currentWeek}.
+                                  </p>
+                                  {recognitions.find(
+                                    (r) =>
+                                      r.creatorId ===
+                                        currentCreatorProfile.id && r.tokenId
+                                  )?.tokenId && (
+                                    <div className="flex items-center space-x-2 mt-2">
+                                      <Hash className="h-4 w-4 text-primary" />
+                                      <span className="text-sm text-primary font-gaming">
+                                        TOKEN #
+                                        {
+                                          recognitions.find(
+                                            (r) =>
+                                              r.creatorId ===
+                                                currentCreatorProfile.id &&
+                                              r.tokenId
+                                          )?.tokenId
+                                        }
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        // Default waiting state
+                        return (
+                          <div className="bg-muted/50 border border-border p-4">
+                            <div className="flex items-center space-x-3">
+                              <Clock className="h-8 w-8 text-muted-foreground" />
+                              <div>
+                                <p className="font-gaming text-lg">
+                                  WAITING FOR RECOGNITION
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  Your profile is live! VIPs are browsing
+                                  creators and recognizing good work.
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  Keep creating great content to increase your
+                                  chances of recognition.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </CardContent>
                   </Card>
 
-                  {/* Recognition Stats */}
-                  <Card className="bg-card border-border">
-                    <CardHeader>
-                      <CardTitle className="font-gaming text-primary flex items-center">
-                        <BarChart3 className="mr-2 h-5 w-5" />
-                        RECOGNITION STATS
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="text-center">
-                          <p className="font-gaming text-2xl text-primary">
-                            {
-                              recognitions.filter(
-                                (r) => r.creatorId === currentCreatorProfile?.id
-                              ).length
-                            }
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            TOTAL RECOGNITIONS
-                          </p>
-                        </div>
-                        <div className="text-center">
-                          <p className="font-gaming text-2xl text-secondary">
-                            {
-                              recognitions.filter(
-                                (r) =>
-                                  r.creatorId === currentCreatorProfile?.id &&
-                                  r.tokenId
-                              ).length
-                            }
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            NFT BADGES MINTED
-                          </p>
-                        </div>
-                        <div className="text-center">
-                          <p className="font-gaming text-2xl text-primary">
-                            {currentWeek}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            CURRENT WEEK
-                          </p>
-                        </div>
-                        <div className="text-center">
-                          <p className="font-gaming text-2xl text-muted-foreground">
-                            {currentCreatorProfile?.hasPendingBadge ? "1" : "0"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            PENDING BADGES
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  {/* Recognition History */}
+                  <RecognitionHistory
+                    creatorRecognitions={creatorRecognitions}
+                    creatorMintedRecognitions={creatorMintedRecognitions} // NEW
+                    currentCreatorProfile={currentCreatorProfile}
+                    isLoading={isRecognitionsLoading}
+                    isMintedLoading={isMintedLoading}
+                  />
+
+                  {/* Replace the old Recognition Stats section with: */}
+                  <RecognitionStats
+                    currentCreatorProfile={currentCreatorProfile}
+                    currentWeek={currentWeek}
+                    pendingRecognitionsCount={safePendingRecognitions.length}
+                    isLoading={!creatorStats}
+                  />
                 </div>
               )}
             </div>

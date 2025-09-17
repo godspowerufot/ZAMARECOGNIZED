@@ -215,15 +215,8 @@ export class ZamaSDKLoader {
         throw new Error("Failed to load SDK");
       }
 
-      console.log("🔍 Checking SDK structure...", {
-        hasEncrypt32: typeof sdk.encrypt32 === "function",
-        hasInitSDK: typeof sdk.initSDK === "function",
-        hasCreateInstance: typeof sdk.createInstance === "function",
-        isInitialized: this.isInitialized,
-      });
-
       // If we already have an initialized instance, return it
-      if (this.isInitialized && sdk && typeof sdk.encrypt32 === "function") {
+      if (this.isInitialized) {
         console.log("✅ Using already initialized SDK instance");
         return sdk;
       }
@@ -233,9 +226,9 @@ export class ZamaSDKLoader {
         console.log("🔧 Initializing SDK module...");
         await sdk.initSDK();
 
-        if (typeof sdk.createInstance === "function" && sdk.SepoliaConfig) {
-          console.log("🏗️ Creating SDK instance with Sepolia config...");
-          const instance = await sdk.createInstance(sdk.SepoliaConfig);
+        if (typeof sdk.createInstance === "function") {
+          console.log("🏗️ Creating SDK instance...");
+          const instance = await sdk.createInstance();
           this.instance = instance;
           this.isInitialized = true;
           console.log("✅ SDK instance created successfully");
@@ -243,18 +236,11 @@ export class ZamaSDKLoader {
         }
       }
 
-      // If it's already an instance (from CDN), just return it
-      if (sdk && typeof sdk.encrypt32 === "function") {
-        console.log("✅ SDK appears to be pre-initialized");
-        this.isInitialized = true;
-        return sdk;
-      }
-
-      console.error("❌ SDK structure not recognized:", {
-        sdkType: typeof sdk,
-        sdkKeys: sdk ? Object.keys(sdk) : "null",
-      });
-      throw new Error("SDK structure not recognized");
+      // Just use the SDK instance as is
+      console.log("✅ Using SDK instance as is");
+      this.instance = sdk;
+      this.isInitialized = true;
+      return sdk;
     } catch (error) {
       console.error("❌ Failed to initialize Zama SDK:", error);
       this.instance = null;
